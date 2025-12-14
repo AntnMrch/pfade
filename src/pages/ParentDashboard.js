@@ -6,7 +6,7 @@ import { Users, Clock, Zap, BarChart3, TrendingUp } from 'lucide-react';
 // ====================================================================
 
 /**
- * Schätzt die Schulnote basierend auf Probeklausurpunkten (Max: 100).
+ * Definiert die prozentualen Schwellenwerte für die Noteneinstufung.
  */
 const getGradeFromPoints = (points) => {
     if (points >= 90) return 1.0;
@@ -14,7 +14,7 @@ const getGradeFromPoints = (points) => {
     if (points >= 65) return 3.0;
     if (points >= 50) return 4.0;
     if (points >= 30) return 5.0;
-    return 6.0;
+    return 6.0; // Unter 30%
 };
 
 /**
@@ -47,20 +47,17 @@ const mockDashboardData = {
     totalModulesCompleted: 14,
     totalTutoringHours: 25,
     averageGradeImprovement: 0.8,
-    // Aktuelle Daten pro Fach: Punkte sind die zentrale Metrik
     currentGrades: [
         { subject: 'Mathematik', grade: 2.5, modules: 7, points: 75, latestExamPoints: [60, 70, 75] }, 
         { subject: 'Physik', grade: 3.0, modules: 3, points: 60, latestExamPoints: [65, 60, 60] },
         { subject: 'Englisch', grade: 1.8, modules: 9, points: 90, latestExamPoints: [85, 90] },
         { subject: 'Chemie', grade: 4.2, modules: 0, points: 40, latestExamPoints: [20, 30, 40] },
     ],
-    // Daten zur Effektivitätsmessung (vorher/nachher Punkte und Stunden)
     tutorEffectiveness: [
         { subject: 'Mathematik', tutor: 'Frau Schmidt', initialPoints: 45, currentPoints: 75, hours: 10 }, 
         { subject: 'Physik', tutor: 'Herr Müller', initialPoints: 60, currentPoints: 60, hours: 5 },      
         { subject: 'Chemie', tutor: 'Fr. Wagner', initialPoints: 20, currentPoints: 50, hours: 8 },       
     ],
-    // Daten für das Radardiagramm
     mathCompetence: {
         labels: ['Algebra', 'Geometrie', 'Funktionen', 'Stochastik', 'Analysis'],
         initial: [40, 60, 50, 30, 20], // in Prozent
@@ -76,48 +73,48 @@ const mockDashboardData = {
 // ====================================================================
 
 const Navigation = () => {
-  const isDashboardActive = window.location.pathname === '/dashboard';
-  const isCharacterActive = window.location.pathname === '/character';
-  const isPathActive = window.location.pathname === '/';
+    const isDashboardActive = window.location.pathname === '/dashboard';
+    const isCharacterActive = window.location.pathname === '/character';
+    const isPathActive = window.location.pathname === '/';
 
-  return (
-    <nav className="bg-indigo-800/95 backdrop-blur-sm border-b border-white/30 sticky top-0 z-50 shadow-lg">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 sm:h-16">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl text-white">🎓</span>
-            <span className="text-white font-bold text-lg sm:text-xl">
-              Lernplattform
-            </span>
-          </div>
-          
-          <div className="flex gap-1 sm:gap-4">
-            <a
-              href="/"
-              className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isPathActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
-            >
-              <span className="hidden sm:inline">🗺️ Pfad</span>
-              <span className="sm:hidden text-lg">🗺️</span>
-            </a>
-            <a
-              href="/character"
-              className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isCharacterActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
-            >
-              <span className="hidden sm:inline">⚔️ Character</span>
-              <span className="sm:hidden text-lg">⚔️</span>
-            </a>
-            <a
-              href="/dashboard"
-              className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isDashboardActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
-            >
-              <span className="hidden sm:inline">📊 Dashboard</span>
-              <span className="sm:hidden text-lg">📊</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
+    return (
+        <nav className="bg-indigo-800/95 backdrop-blur-sm border-b border-white/30 sticky top-0 z-50 shadow-lg">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center h-14 sm:h-16">
+                    <div className="flex items-center gap-2">
+                        <span className="text-2xl text-white">🎓</span>
+                        <span className="text-white font-bold text-lg sm:text-xl">
+                            Lernplattform
+                        </span>
+                    </div>
+
+                    <div className="flex gap-1 sm:gap-4">
+                        <a
+                            href="/"
+                            className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isPathActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
+                        >
+                            <span className="hidden sm:inline">🗺️ Pfad</span>
+                            <span className="sm:hidden text-lg">🗺️</span>
+                        </a>
+                        <a
+                            href="/character"
+                            className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isCharacterActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
+                        >
+                            <span className="hidden sm:inline">⚔️ Character</span>
+                            <span className="sm:hidden text-lg">⚔️</span>
+                        </a>
+                        <a
+                            href="/dashboard"
+                            className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isDashboardActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
+                        >
+                            <span className="hidden sm:inline">📊 Dashboard</span>
+                            <span className="sm:hidden text-lg">📊</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    );
 };
 
 const DashboardCard = ({ icon, title, value, color }) => (
@@ -132,14 +129,12 @@ const DashboardCard = ({ icon, title, value, color }) => (
     </div>
 );
 
-// Stellt die Verbesserung durch Nachhilfe dar (Punkte-basiert)
 const ImprovementBar = ({ subject, tutor, initialPoints, currentPoints, hours }) => {
     
     const improvement = currentPoints - initialPoints;
     const initialGrade = getGradeFromPoints(initialPoints);
     const currentGrade = getGradeFromPoints(currentPoints);
     
-    // Berechnung der Effizienz: Punkte pro Stunde
     const efficiency = improvement > 0 ? (improvement / hours) : null; 
 
     return (
@@ -178,7 +173,6 @@ const ImprovementBar = ({ subject, tutor, initialPoints, currentPoints, hours })
     );
 };
 
-// Platzhalter für Zeitreihen-Diagramme
 const ChartPlaceholder = ({ data, label, color, type, labels }) => {
     const maxVal = type === 'grade' ? 4.5 : Math.max(...data) * 1.1; 
     const minVal = type === 'grade' ? 1 : 0; 
@@ -227,7 +221,6 @@ const ChartPlaceholder = ({ data, label, color, type, labels }) => {
     );
 };
 
-// Platzhalter für Radardiagramm
 const RadarChartPlaceholder = ({ data }) => {
     return (
         <div className="mt-4 p-4 border rounded-lg bg-gray-50">
@@ -255,7 +248,7 @@ const RadarChartPlaceholder = ({ data }) => {
     );
 };
 
-// Optimiert für das Platzproblem: Zeigt nur Effizienz im Balken, Verbesserung daneben.
+
 const EfficiencyChartPlaceholder = ({ data }) => {
     const efficientData = data
         .filter(d => (d.currentPoints - d.initialPoints) > 0)
@@ -292,16 +285,17 @@ const EfficiencyChartPlaceholder = ({ data }) => {
     );
 };
 
-// Visuelle Darstellung der Punkte-zu-Note-Skala (als Teil der Fachkarte)
+// **KORRIGIERT:** Visuelle Darstellung der Punkte-zu-Note-Skala mit Inline-CSS Farbwerten
 const PointsToGradeVisualizer = ({ currentPoints, latestPoints = [] }) => {
     const maxPoints = 100;
+    // Skala mit prozentualen Minima UND den tatsächlichen CSS-Hintergrundfarben (Hex-Codes für Tailwind-Farben)
     const scale = [
-        { min: 90, grade: 1.0, color: 'bg-green-500' },
-        { min: 80, grade: 2.0, color: 'bg-lime-500' },
-        { min: 65, grade: 3.0, color: 'bg-yellow-500' },
-        { min: 50, grade: 4.0, color: 'bg-orange-500' },
-        { min: 30, grade: 5.0, color: 'bg-red-500' },
-        { min: 0, grade: 6.0, color: 'bg-red-700' },
+        { min: 90, grade: 1.0, cssColor: '#10B981' },     // Green-500
+        { min: 80, grade: 2.0, cssColor: '#84CC16' },     // Lime-500
+        { min: 65, grade: 3.0, cssColor: '#FBBF24' },     // Yellow-500
+        { min: 50, grade: 4.0, cssColor: '#F97316' },     // Orange-500
+        { min: 30, grade: 5.0, cssColor: '#EF4444' },     // Red-500
+        { min: 0, grade: 6.0, cssColor: '#B91C1C' },      // Red-700
     ];
     
     const estimatedGrade = getGradeFromPoints(currentPoints);
@@ -315,22 +309,27 @@ const PointsToGradeVisualizer = ({ currentPoints, latestPoints = [] }) => {
             <div className="relative h-4 rounded-full bg-gray-300 overflow-hidden">
                 {/* Farbsegmente (Skala) */}
                 {scale.map((item, index) => {
-                    const nextMin = scale[index - 1]?.min || maxPoints + 1;
+                    const nextMin = scale[index - 1]?.min || maxPoints;
+                    const currentMin = item.min;
+                    
+                    const widthPercentage = (nextMin - currentMin) / maxPoints * 100;
+                    const leftPercentage = currentMin / maxPoints * 100;
                     
                     return (
                         <div 
                             key={item.grade}
-                            className={`h-full absolute top-0 left-0`}
+                            className={`h-full absolute top-0`}
                             style={{ 
-                                background: item.color,
-                                width: `${(nextMin / maxPoints) * 100}%`,
-                                clipPath: `inset(0 ${(maxPoints - nextMin) / maxPoints * 100}% 0 0)`
+                                // Verwendung des direkten Farbcodes im Style-Attribut
+                                background: item.cssColor, 
+                                left: `${leftPercentage}%`,
+                                width: `${widthPercentage}%`
                             }}
                         />
                     );
                 })}
                 
-                {/* Aktueller Punktemarker */}
+                {/* Aktueller Punktemarker (schwarz) */}
                 <div 
                     className="absolute top-0 bottom-0 w-1.5 bg-black rounded-full shadow-lg z-10"
                     style={{ left: `${(currentPoints / maxPoints) * 100}%`, transform: 'translateX(-50%)' }}
@@ -365,7 +364,6 @@ const CurrentGradesCard = ({ subject, grade, modules, points, latestExamPoints }
         <div className="p-4 border border-gray-200 rounded-xl hover:shadow-md transition-shadow bg-white">
             <h3 className="font-bold text-lg text-gray-700">{subject}</h3>
             
-            {/* Hier wird die Visualisierung des Punktestands direkt eingebettet */}
             <PointsToGradeVisualizer currentPoints={points} latestPoints={latestExamPoints} />
 
             <div className="mt-2 flex justify-between items-center border-t pt-2">
@@ -394,6 +392,15 @@ const CurrentGradesCard = ({ subject, grade, modules, points, latestExamPoints }
 // ====================================================================
 
 const ParentDashboard = () => {
+    const LegendScale = [
+        { min: '90%', grade: 1.0, color: 'bg-green-500' },
+        { min: '80%', grade: 2.0, color: 'bg-lime-500' },
+        { min: '65%', grade: 3.0, color: 'bg-yellow-500' },
+        { min: '50%', grade: 4.0, color: 'bg-orange-500' },
+        { min: '30%', grade: 5.0, color: 'bg-red-500' },
+        { min: '0%', grade: 6.0, color: 'bg-red-700' },
+    ];
+    
     return (
         <div className="min-h-screen bg-gray-100">
             <Navigation />
@@ -475,12 +482,15 @@ const ParentDashboard = () => {
                          <div className="bg-gray-50 p-4 rounded-lg shadow-sm flex flex-col justify-center items-center">
                             <h3 className="text-lg font-bold text-gray-700 mb-2">Punkte-Skala Legende</h3>
                             <div className="space-y-2 text-left w-full">
-                                <div className="flex justify-between text-sm"><span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-green-500"></div> Note 1.0</span> 90% bis 100%</div>
-                                <div className="flex justify-between text-sm"><span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-lime-500"></div> Note 2.0</span> 80% bis 90%</div>
-                                <div className="flex justify-between text-sm"><span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-yellow-500"></div> Note 3.0</span> 65% bis 80%</div>
-                                <div className="flex justify-between text-sm"><span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-orange-500"></div> Note 4.0</span> 50% bis 65%</div>
-                                <div className="flex justify-between text-sm"><span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-red-500"></div> Note 5.0</span> 30% bis 50%</div>
-                                <div className="flex justify-between text-sm"><span className="flex items-center gap-1"><div className="w-3 h-3 rounded-full bg-red-700"></div> Note 6.0</span> 0% bis 30%</div>
+                                {LegendScale.map(item => (
+                                    <div key={item.grade} className="flex justify-between text-sm">
+                                        <span className="flex items-center gap-1">
+                                            <div className={`w-3 h-3 rounded-full ${item.color}`}></div> 
+                                            Note {item.grade.toFixed(1)}
+                                        </span> 
+                                        <span className="text-gray-500">{item.min} bis {LegendScale[LegendScale.findIndex(s => s.grade === item.grade) - 1]?.min || '100%'}</span>
+                                    </div>
+                                ))}
                             </div>
                             <p className="text-xs text-gray-500 mt-3">Detailierte Visualisierung in den Fächerkarten.</p>
                         </div>
