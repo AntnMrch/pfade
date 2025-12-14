@@ -343,13 +343,12 @@ const generateHexGrid = () => {
         {isLesson && (
           <g transform={`translate(${x}, ${y})`}>
             
-            {/* ---------------- WENN ES DER ENDBOSS IST ---------------- */}
+{/* ---------------- WENN ES DER ENDBOSS IST (DRACHE) ---------------- */}
             {isBoss && (
               <g transform="translate(0, -10)">
-                {/* Dein Drachen-Bild als foreignObject */}
                 <foreignObject x="-50" y="-70" width="100" height="140" style={{ pointerEvents: 'none' }}>
-                  <div className="flex flex-col items-center justify-center h-full">
-                    {/* WICHTIG: Pfad muss korrekt sein! Das Bild muss im 'public'-Ordner liegen! */}
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    {/* HINWEIS: Stelle sicher, dass drache.jpg im /public-Ordner liegt */}
                     <img
                       src="/drache.jpg" 
                       alt="drache"
@@ -360,18 +359,35 @@ const generateHexGrid = () => {
               </g>
             )}
             
-            {/* ---------------- ICONS FÜR ANDERE Lektionen ---------------- */}
-            {!isBoss && isLocked && (
-              <g transform="translate(0, -5)">
-                <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
-                <foreignObject x="-15" y="-15" width="30" height="30">
-                  <div className="flex items-center justify-center w-full h-full">
-                    <Lock className="w-6 h-6 text-gray-600" />
+            {/* ---------------- WENN ES DIE AKTUELLE LEKTION IST (RITTER) ---------------- */}
+            {!isBoss && isActive && (
+              <g transform="translate(0, -70)">
+                {/* Ritter-Figur, 70px über dem Hexagon */}
+                <foreignObject x="-50" y="-70" width="100" height="140" style={{ pointerEvents: 'none' }}>
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    {/* HINWEIS: Stelle sicher, dass matheritter.jpg im /public-Ordner liegt */}
+                    <img
+                      src="/matheritter.jpg"
+                      alt="matheritter"
+                      className="w-16 sm:w-20 lg:w-24 h-auto drop-shadow-xl"
+                    />
                   </div>
                 </foreignObject>
+                
+                {/* Blauer Stern im Hexagon (für aktive Lektion) */}
+                <g transform="translate(0, 70)"> 
+                  <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
+                  <foreignObject x="-15" y="-15" width="30" height="30">
+                    <div className="flex items-center justify-center w-full h-full">
+                      <Star className="w-7 h-7 text-blue-600 fill-blue-600" />
+                    </div>
+                  </foreignObject>
+                </g>
               </g>
             )}
-            {!isBoss && isCompleted && (
+
+            {/* ---------------- WENN ES ABGESCHLOSSEN IST ---------------- */}
+            {!isBoss && !isActive && isCompleted && (
               <g transform="translate(0, -5)">
                 <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
                 <foreignObject x="-15" y="-15" width="30" height="30">
@@ -381,17 +397,21 @@ const generateHexGrid = () => {
                 </foreignObject>
               </g>
             )}
-            {!isBoss && isActive && (
+
+            {/* ---------------- WENN ES GESPERRT IST ---------------- */}
+            {!isBoss && !isActive && isLocked && (
               <g transform="translate(0, -5)">
                 <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
                 <foreignObject x="-15" y="-15" width="30" height="30">
                   <div className="flex items-center justify-center w-full h-full">
-                    <Star className="w-7 h-7 text-blue-600 fill-blue-600" />
+                    <Lock className="w-6 h-6 text-gray-600" />
                   </div>
                 </foreignObject>
               </g>
             )}
-            {!isBoss && !isLocked && !isCompleted && !isActive && (
+            
+            {/* ---------------- WENN ES VERFÜGBAR IST ---------------- */}
+            {!isBoss && !isActive && !isCompleted && !isLocked && (
               <g transform="translate(0, -5)">
                 <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
                 <foreignObject x="-15" y="-15" width="30" height="30">
@@ -669,6 +689,21 @@ const generateHexGrid = () => {
             preserveAspectRatio="xMidYMid slice" // "slice" sorgt dafür, dass es den ganzen Bereich ausfüllt
             >
           
+
+
+            {learningPath.map((lesson, i) => {
+              if (i === 0) return null;
+              const prevLesson = learningPath[i - 1];
+              return (
+                <PathLine
+                  key={`path-${i}`}
+                  from={prevLesson.hexPos}
+                  to={lesson.hexPos}
+                  completed={prevLesson.isCompleted}
+                />
+              );
+            })}
+
             {gridHexes.map((hex, i) => {
               const lesson = learningPath.find(
                 (l) => l.hexPos.q === hex.q && l.hexPos.r === hex.r
@@ -685,46 +720,7 @@ const generateHexGrid = () => {
               );
             })}
 
-            {learningPath.map((lesson, i) => {
-              if (i === 0) return null;
-              const prevLesson = learningPath[i - 1];
-              return (
-                <PathLine
-                  key={`path-${i}`}
-                  from={prevLesson.hexPos}
-                  to={lesson.hexPos}
-                  completed={prevLesson.isCompleted}
-                />
-              );
-            })}
-
-            {currentLesson && (
-              <g
-                transform={`translate(${
-                  hexToPixel(
-                    currentLesson.hexPos.q,
-                    currentLesson.hexPos.r,
-                    hexSize
-                  ).x
-                }, ${
-                  hexToPixel(
-                    currentLesson.hexPos.q,
-                    currentLesson.hexPos.r,
-                    hexSize
-                  ).y - 70
-                })`}
-              >
-                <foreignObject x="-50" y="-70" width="100" height="140">
-                  <div className="flex flex-col items-center">
-                    <img
-                      src="matheritter.jpg"
-                      alt="matheritter"
-                      className="w-16 sm:w-20 lg:w-24 h-auto drop-shadow-xl"
-                    />
-                  </div>
-                </foreignObject>
-              </g>
-            )}
+            
           </svg>
         </div>
 
