@@ -604,21 +604,16 @@ const DuolingoLearningPath = () => {
                   ).y - 70
                 })`}
               >
-                <foreignObject x="-30" y="-30" width="60" height="80">
-                  <div className="flex flex-col items-center animate-bounce">
-                    <div className="relative">
-                      <Shield className="w-12 h-12 text-yellow-400 fill-yellow-300 drop-shadow-lg" />
-                      <Sword className="absolute top-1 left-1 w-8 h-8 text-blue-300 drop-shadow-lg" />
-                    </div>
-                    <div className="mt-1 bg-white/90 px-2 py-0.5 rounded-full text-xs font-bold text-indigo-900">
-                      Ritter
-                    </div>
+                <foreignObject x="-50" y="-70" width="100" height="140">
+                  <div className="flex flex-col items-center">
+                    <img src="matheritter.jpg" alt="matheritter" className="w-24 h-auto drop-shadow-xl" />
                   </div>
                 </foreignObject>
               </g>
             )}
           </svg>
         </div>
+
 
         <div className="mt-8 bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
           <h3 className="font-bold text-white mb-4 text-center">Legende</h3>
@@ -649,3 +644,6 @@ const DuolingoLearningPath = () => {
 };
 
 export default DuolingoLearningPath;
+
+
+
