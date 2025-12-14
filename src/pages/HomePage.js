@@ -352,7 +352,7 @@ const generateHexGrid = () => {
                     <img
                       src="/drache.jpg" 
                       alt="drache"
-                      className="w-16 sm:w-20 lg:w-24 h-auto drop-shadow-xl animate-pulse" 
+                      className="w-16 sm:w-20 lg:w-24 h-auto drop-shadow-xl" 
                     />
                   </div>
                 </foreignObject>
