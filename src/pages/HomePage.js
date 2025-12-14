@@ -206,7 +206,7 @@ const HomePage = () => {
       completedExercises: 0,
       description: "Bezwinge den Drachen und schließe das Modul ab! Eine epische Prüfung wartet auf dich.",
       rewards: ["500 XP", "+5 Skill Level", "Drachen-Meister Titel", "Modul-Zertifikat"],
-      isLocked: true,
+      isLocked: false,
       isCompleted: false,
       isBoss: true,
       hexPos: { q: 1, r: 8 },
