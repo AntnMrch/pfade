@@ -7,10 +7,49 @@ import {
   Target,
   Award,
   X,
-  Shield,
-  Sword,
+  Flame,
+  Crown,
+  Zap,
 } from "lucide-react";
 
+
+const Navigation = () => {
+  return (
+    <nav className="bg-white/10 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-14 sm:h-16">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🎓</span>
+            <span className="text-white font-bold text-lg sm:text-xl hidden sm:block">
+              Mathe Lernpfad
+            </span>
+          </div>
+          
+          <div className="flex gap-2 sm:gap-4">
+            <a
+              href="/"
+              className="px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-white/90 hover:bg-white/20 transition-all font-medium text-sm sm:text-base"
+            >
+              🗺️ Pfad
+            </a>
+            <a
+              href="/character"
+              className="px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-white/90 hover:bg-white/20 transition-all font-medium text-sm sm:text-base"
+            >
+              ⚔️ Character
+            </a>
+            <a
+              href="/dashboard"
+              className="px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-white/90 hover:bg-white/20 transition-all font-medium text-sm sm:text-base"
+            >
+              📊 Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+};
 
 const HomePage = () => {
   const [selectedLesson, setSelectedLesson] = useState(null);
@@ -34,7 +73,7 @@ const HomePage = () => {
       rewards: ["50 XP", "+1 Skill Level"],
       isLocked: false,
       isCompleted: true,
-      hexPos: { q: 0, r: 0 },
+      hexPos: { q: 1, r: 0 },
     },
     {
       id: 2,
@@ -54,7 +93,7 @@ const HomePage = () => {
       rewards: ["75 XP", "+1 Skill Level", "Bronze Abzeichen"],
       isLocked: false,
       isCompleted: true,
-      hexPos: { q: -1, r: 1 },
+      hexPos: { q: 2, r: 1 },
     },
     {
       id: 3,
@@ -93,7 +132,7 @@ const HomePage = () => {
       rewards: ["100 XP", "+1 Skill Level"],
       isLocked: false,
       isCompleted: false,
-      hexPos: { q: 1, r: 2 },
+      hexPos: { q: 1, r: 3 },
     },
     {
       id: 5,
@@ -131,7 +170,7 @@ const HomePage = () => {
       rewards: ["75 XP", "+1 Skill Level"],
       isLocked: true,
       isCompleted: false,
-      hexPos: { q: -1, r: 5 },
+      hexPos: { q: 2, r: 5 },
     },
     {
       id: 7,
@@ -150,25 +189,52 @@ const HomePage = () => {
       rewards: ["100 XP", "+2 Skill Level"],
       isLocked: true,
       isCompleted: false,
-      hexPos: { q: 1, r: 5 },
+      hexPos: { q: 1, r: 6 },
+    },
+    {
+      id: 8,
+      title: "Final Boss",
+      level: "Drache",
+      levelNumber: "👑",
+      xp: 0,
+      maxXp: 2000,
+      difficulty: "Episch",
+      estimatedTime: "60-90 Min",
+      requiredSkills: ["Alle bisherigen Skills"],
+      skillLevels: { "Gesamtes Modul": 7 },
+      exercises: 50,
+      completedExercises: 0,
+      description: "Bezwinge den Drachen und schließe das Modul ab! Eine epische Prüfung wartet auf dich.",
+      rewards: ["500 XP", "+5 Skill Level", "Drachen-Meister Titel", "Modul-Zertifikat"],
+      isLocked: true,
+      isCompleted: false,
+      isBoss: true,
+      hexPos: { q: 1, r: 8 },
     },
   ];
 
-  const hexToPixel = (q, r, size) => {
-    const x = size * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
-    const y = size * ((3 / 2) * r);
-    return { x, y };
-  };
+const hexToPixel = (q, r, size) => {
+  // ÄNDERUNG: Statt (q + r/2) nutzen wir (q + (r % 2) / 2)
+  // Das sorgt dafür, dass nur ungerade Zeilen einen kleinen Versatz haben,
+  // aber das Raster insgesamt vertikal gerade bleibt.
+  const x = size * Math.sqrt(3) * (q + ((r % 2) / 2));
+  const y = size * 3/2 * r;
+  return { x, y };
+};
 
-  const generateHexGrid = () => {
-    const hexes = [];
-    for (let q = -2; q <= 2; q++) {
-      for (let r = -1; r <= 6; r++) {
-        hexes.push({ q, r });
-      }
+const generateHexGrid = () => {
+  const hexes = [];
+  // Wir erweitern den Bereich deutlich:
+  // q (Spalten): von -3 bis 6 (damit links und rechts genug Platz ist)
+  // r (Zeilen): von -2 bis 12 (damit auch oben/unten Puffer ist)
+  for (let r = -2; r <= 15; r++) {
+    for (let q = -3; q <= 12; q++) {
+      hexes.push({ q, r });
     }
-    return hexes;
-  };
+  }
+  return hexes;
+};
+
 
   const getLevelColor = (level) => {
     const colors = {
@@ -176,6 +242,7 @@ const HomePage = () => {
       Silber: "from-gray-300 to-gray-500",
       Gold: "from-yellow-400 to-yellow-600",
       Platin: "from-cyan-400 to-blue-600",
+      Drache: "from-red-600 via-orange-600 to-yellow-500",
     };
     return colors[level];
   };
@@ -186,6 +253,7 @@ const HomePage = () => {
       Silber: "bg-gray-100 text-gray-700 border-gray-300",
       Gold: "bg-yellow-100 text-yellow-700 border-yellow-300",
       Platin: "bg-cyan-100 text-cyan-700 border-cyan-300",
+      Drache: "bg-red-100 text-red-700 border-red-400",
     };
     return colors[level];
   };
@@ -196,6 +264,7 @@ const HomePage = () => {
       Mittel: "bg-yellow-100 text-yellow-700",
       Schwer: "bg-orange-100 text-orange-700",
       "Sehr Schwer": "bg-red-100 text-red-700",
+      Episch: "bg-gradient-to-r from-red-100 to-orange-100 text-red-800 font-bold",
     };
     return colors[difficulty];
   };
@@ -217,6 +286,7 @@ const HomePage = () => {
     }
 
     const isLesson = lesson !== undefined;
+    const isBoss = lesson?.isBoss;
     const isActive = lesson?.isActive;
     const isCompleted = lesson?.isCompleted;
     const isLocked = lesson?.isLocked;
@@ -227,7 +297,12 @@ const HomePage = () => {
     let strokeWidth = 2;
 
     if (isLesson) {
-      if (isCompleted) {
+      if (isBoss) {
+        fillColor = "#dc2626";
+        opacity = 0.95;
+        strokeColor = "#991b1b";
+        strokeWidth = 8;
+      } else if (isCompleted) {
         fillColor = "#22c55e";
         opacity = 0.9;
         strokeColor = "#16a34a";
@@ -267,7 +342,26 @@ const HomePage = () => {
         />
         {isLesson && (
           <g transform={`translate(${x}, ${y})`}>
-            {isLocked && (
+            
+            {/* ---------------- WENN ES DER ENDBOSS IST ---------------- */}
+            {isBoss && (
+              <g transform="translate(0, -10)">
+                {/* Dein Drachen-Bild als foreignObject */}
+                <foreignObject x="-50" y="-70" width="100" height="140" style={{ pointerEvents: 'none' }}>
+                  <div className="flex flex-col items-center justify-center h-full">
+                    {/* WICHTIG: Pfad muss korrekt sein! Das Bild muss im 'public'-Ordner liegen! */}
+                    <img
+                      src="/drache.jpg" 
+                      alt="drache"
+                      className="w-16 sm:w-20 lg:w-24 h-auto drop-shadow-xl animate-pulse" 
+                    />
+                  </div>
+                </foreignObject>
+              </g>
+            )}
+            
+            {/* ---------------- ICONS FÜR ANDERE Lektionen ---------------- */}
+            {!isBoss && isLocked && (
               <g transform="translate(0, -5)">
                 <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
                 <foreignObject x="-15" y="-15" width="30" height="30">
@@ -277,7 +371,7 @@ const HomePage = () => {
                 </foreignObject>
               </g>
             )}
-            {isCompleted && (
+            {!isBoss && isCompleted && (
               <g transform="translate(0, -5)">
                 <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
                 <foreignObject x="-15" y="-15" width="30" height="30">
@@ -287,7 +381,7 @@ const HomePage = () => {
                 </foreignObject>
               </g>
             )}
-            {isActive && (
+            {!isBoss && isActive && (
               <g transform="translate(0, -5)">
                 <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
                 <foreignObject x="-15" y="-15" width="30" height="30">
@@ -297,7 +391,7 @@ const HomePage = () => {
                 </foreignObject>
               </g>
             )}
-            {!isLocked && !isCompleted && !isActive && (
+            {!isBoss && !isLocked && !isCompleted && !isActive && (
               <g transform="translate(0, -5)">
                 <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
                 <foreignObject x="-15" y="-15" width="30" height="30">
@@ -307,24 +401,28 @@ const HomePage = () => {
                 </foreignObject>
               </g>
             )}
+            
+            {/* TEXT-Labels unter den Hexagons */}
             <text
               x="0"
-              y="25"
+              y={isBoss ? "50" : "25"} // y auf 50 erhöht, weil das Drachenbild größer ist
               textAnchor="middle"
-              className="text-xs font-bold fill-white"
-              style={{ fontSize: "11px", pointerEvents: "none" }}
+              className={`text-xs font-bold ${isBoss ? "fill-red-100" : "fill-white"}`}
+              style={{ fontSize: isBoss ? "13px" : "11px", pointerEvents: "none" }}
             >
-              {lesson.title.split(" ")[0]}
+              {isBoss ? "BOSS" : lesson.title.split(" ")[0]}
             </text>
-            <text
-              x="0"
-              y="37"
-              textAnchor="middle"
-              className="text-xs fill-white"
-              style={{ fontSize: "10px", pointerEvents: "none" }}
-            >
-              {lesson.title.split(" ").slice(1).join(" ")}
-            </text>
+            {!isBoss && (
+              <text
+                x="0"
+                y="37"
+                textAnchor="middle"
+                className="text-xs fill-white"
+                style={{ fontSize: "10px", pointerEvents: "none" }}
+              >
+                {lesson.title.split(" ").slice(1).join(" ")}
+              </text>
+            )}
           </g>
         )}
       </g>
@@ -356,46 +454,46 @@ const HomePage = () => {
 
     return (
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-2 sm:p-4"
         onClick={() => setSelectedLesson(null)}
       >
         <div
-          className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-2xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <div
             className={`bg-gradient-to-r ${getLevelColor(
               lesson.level
-            )} p-6 text-white relative`}
+            )} p-4 sm:p-6 text-white relative`}
           >
             <button
               onClick={() => setSelectedLesson(null)}
-              className="absolute top-4 right-4 p-2 hover:bg-white/20 rounded-full"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 p-2 hover:bg-white/20 rounded-full"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
-            <div className="flex items-start gap-3 mb-3">
+            <div className="flex items-start gap-2 sm:gap-3 mb-2 sm:mb-3">
               <span
-                className={`px-4 py-1.5 rounded-full text-sm font-bold border-2 ${getLevelBadgeColor(
+                className={`px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-xs sm:text-sm font-bold border-2 ${getLevelBadgeColor(
                   lesson.level
                 )}`}
               >
                 {lesson.level} • Level {lesson.levelNumber}
               </span>
             </div>
-            <h2 className="text-3xl font-bold mb-2">{lesson.title}</h2>
-            <p className="text-white/90">{lesson.description}</p>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">{lesson.title}</h2>
+            <p className="text-sm sm:text-base text-white/90">{lesson.description}</p>
           </div>
 
-          <div className="p-6">
-            <div className="mb-6">
-              <div className="flex justify-between items-center text-sm text-gray-600 mb-2">
+          <div className="p-4 sm:p-6">
+            <div className="mb-4 sm:mb-6">
+              <div className="flex justify-between items-center text-xs sm:text-sm text-gray-600 mb-2">
                 <span className="font-semibold">Fortschritt</span>
-                <span className="font-bold text-lg text-indigo-600">
+                <span className="font-bold text-base sm:text-lg text-indigo-600">
                   {Math.round(progressPercent)}%
                 </span>
               </div>
-              <div className="bg-gray-200 rounded-full h-4 overflow-hidden">
+              <div className="bg-gray-200 rounded-full h-3 sm:h-4 overflow-hidden">
                 <div
                   className={`h-full bg-gradient-to-r ${getLevelColor(
                     lesson.level
@@ -413,25 +511,25 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div className="flex gap-3 mb-6">
+            <div className="flex flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
               <span
-                className={`px-4 py-2 rounded-lg text-sm font-semibold ${getDifficultyColor(
+                className={`px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold ${getDifficultyColor(
                   lesson.difficulty
                 )}`}
               >
                 🎯 {lesson.difficulty}
               </span>
-              <span className="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-100 text-blue-700">
+              <span className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold bg-blue-100 text-blue-700">
                 ⏱️ {lesson.estimatedTime}
               </span>
             </div>
 
-            <div className="mb-6 bg-gradient-to-br from-indigo-50 to-purple-50 p-5 rounded-xl border border-indigo-100">
-              <h3 className="text-sm font-bold text-indigo-900 mb-4 uppercase flex items-center gap-2">
-                <Target className="w-5 h-5" />
-                Benötigte Skills & Dein aktueller Rang:
+            <div className="mb-4 sm:mb-6 bg-gradient-to-br from-indigo-50 to-purple-50 p-4 sm:p-5 rounded-xl border border-indigo-100">
+              <h3 className="text-xs sm:text-sm font-bold text-indigo-900 mb-3 sm:mb-4 uppercase flex items-center gap-2">
+                <Target className="w-4 h-4 sm:w-5 sm:h-5" />
+                Benötigte Skills & Dein Rang:
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {lesson.requiredSkills.map((skill) => {
                   const level = lesson.skillLevels[skill];
                   const rank =
@@ -445,28 +543,28 @@ const HomePage = () => {
                   return (
                     <div
                       key={skill}
-                      className="bg-white p-4 rounded-lg shadow-sm"
+                      className="bg-white p-3 sm:p-4 rounded-lg shadow-sm"
                     >
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-semibold text-gray-800">
+                        <span className="text-sm sm:text-base font-semibold text-gray-800">
                           {skill}
                         </span>
-                        <span className="text-xs font-bold px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full">
+                        <span className="text-xs font-bold px-2 py-1 bg-indigo-100 text-indigo-700 rounded-full">
                           {rank}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 flex gap-1">
+                        <div className="flex-1 flex gap-0.5 sm:gap-1">
                           {[...Array(10)].map((_, i) => (
                             <div
                               key={i}
-                              className={`flex-1 h-5 rounded-sm ${
+                              className={`flex-1 h-4 sm:h-5 rounded-sm ${
                                 i < level ? getStatColor(level) : "bg-gray-200"
                               }`}
                             />
                           ))}
                         </div>
-                        <span className="font-bold text-gray-700 min-w-[3rem] text-right">
+                        <span className="text-xs sm:text-sm font-bold text-gray-700 min-w-[2.5rem] text-right">
                           {level}/10
                         </span>
                       </div>
@@ -476,16 +574,16 @@ const HomePage = () => {
               </div>
             </div>
 
-            <div className="mb-6 bg-gradient-to-br from-yellow-50 to-orange-50 p-5 rounded-xl border-2 border-yellow-200">
-              <h3 className="text-sm font-bold text-yellow-900 mb-3 flex items-center gap-2">
-                <Award className="w-5 h-5" />
-                🎁 Belohnungen beim Abschluss:
+            <div className="mb-4 sm:mb-6 bg-gradient-to-br from-yellow-50 to-orange-50 p-4 sm:p-5 rounded-xl border-2 border-yellow-200">
+              <h3 className="text-xs sm:text-sm font-bold text-yellow-900 mb-2 sm:mb-3 flex items-center gap-2">
+                <Award className="w-4 h-4 sm:w-5 sm:h-5" />
+                🎁 Belohnungen:
               </h3>
               <div className="flex flex-wrap gap-2">
                 {lesson.rewards.map((reward, idx) => (
                   <span
                     key={idx}
-                    className="font-medium bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full border border-yellow-300"
+                    className="text-xs sm:text-sm font-medium bg-yellow-100 text-yellow-800 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full border border-yellow-300"
                   >
                     {reward}
                   </span>
@@ -495,7 +593,7 @@ const HomePage = () => {
 
             <button
               disabled={lesson.isLocked}
-              className={`w-full py-4 rounded-xl font-bold text-lg shadow-lg
+              className={`w-full py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg shadow-lg
                 ${
                   lesson.isLocked
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -507,11 +605,13 @@ const HomePage = () => {
                 }`}
             >
               {lesson.isLocked
-                ? "🔒 Vorherige Lektionen abschließen"
+                ? "🔒 Vorherige Lektionen"
                 : lesson.isCompleted
                 ? "✓ Wiederholen"
                 : lesson.isActive
                 ? "▶ Weiterlernen!"
+                : lesson.isBoss
+                ? "⚔️ Boss bekämpfen!"
                 : "🚀 Starten"}
             </button>
           </div>
@@ -527,39 +627,48 @@ const HomePage = () => {
   const gridHexes = generateHexGrid();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-3 sm:p-6 lg:p-8">
+        <Navigation /> 
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl shadow-2xl p-8 mb-8 text-white border border-white/20">
-          <h1 className="text-5xl font-bold mb-3 drop-shadow-lg">
+        <div className="bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 lg:mb-8 text-white border border-white/20">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 drop-shadow-lg text-center sm:text-left">
             🎯 Dein Mathe-Lernpfad
           </h1>
-          <p className="text-white/80 text-lg mb-6">
+          <p className="text-sm sm:text-base lg:text-lg text-white/80 mb-4 sm:mb-6 text-center sm:text-left">
             Folge dem Hexagon-Pfad zum Mathe-Meister!
           </p>
 
-          <div className="flex justify-center gap-8">
+          <div className="flex justify-center gap-4 sm:gap-6 lg:gap-8">
             <div className="text-center">
-              <div className="text-4xl font-bold text-yellow-300">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-yellow-300">
                 {completedCount}/{learningPath.length}
               </div>
-              <div className="text-sm text-white/70">Abgeschlossen</div>
+              <div className="text-xs sm:text-sm text-white/70">Abgeschlossen</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-purple-300">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-purple-300">
                 {totalXP}
               </div>
-              <div className="text-sm text-white/70">Gesamt XP</div>
+              <div className="text-xs sm:text-sm text-white/70">Gesamt XP</div>
             </div>
           </div>
         </div>
 
-        <div className="relative bg-gradient-to-br from-purple-800 to-indigo-800 rounded-3xl shadow-2xl p-8 overflow-hidden">
-          <svg
+        <div className="relative bg-gradient-to-br from-purple-800 to-indigo-800 rounded-2xl sm:rounded-3xl shadow-2xl p-2 sm:p-6 lg:p-8 overflow-x-auto">
+          
+            <svg
             width="100%"
-            height="1000"
-            viewBox="-200 -100 800 1000"
+            height="100%" // Du kannst hier auch "100%" machen, wenn der Container eine feste Höhe hat
+            // Erklärung ViewBox:
+            // x = -200: Startet weiter links, um die neuen Hintergrund-Hexagons zu zeigen
+            // y = -100: Startet etwas höher
+            // width = 750: Die Breite des sichtbaren Bereichs (zoomt etwas raus)
+            // height = 1100: Die Höhe (zeigt mehr vom Pfad)
+            viewBox="-200 -100 750 1100" 
             className="mx-auto"
-          >
+            preserveAspectRatio="xMidYMid slice" // "slice" sorgt dafür, dass es den ganzen Bereich ausfüllt
+            >
+          
             {gridHexes.map((hex, i) => {
               const lesson = learningPath.find(
                 (l) => l.hexPos.q === hex.q && l.hexPos.r === hex.r
@@ -607,7 +716,11 @@ const HomePage = () => {
               >
                 <foreignObject x="-50" y="-70" width="100" height="140">
                   <div className="flex flex-col items-center">
-                    <img src="matheritter.jpg" alt="matheritter" className="w-24 h-auto drop-shadow-xl" />
+                    <img
+                      src="matheritter.jpg"
+                      alt="matheritter"
+                      className="w-16 sm:w-20 lg:w-24 h-auto drop-shadow-xl"
+                    />
                   </div>
                 </foreignObject>
               </g>
@@ -615,25 +728,30 @@ const HomePage = () => {
           </svg>
         </div>
 
-
-        <div className="mt-8 bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-6 border border-white/20">
-          <h3 className="font-bold text-white mb-4 text-center">Legende</h3>
-          <div className="flex flex-wrap justify-center gap-4 text-sm text-white">
+        <div className="mt-4 sm:mt-6 lg:mt-8 bg-white/10 backdrop-blur-md rounded-xl shadow-lg p-4 sm:p-6 border border-white/20">
+          <h3 className="font-bold text-white mb-3 sm:mb-4 text-center text-sm sm:text-base">Legende</h3>
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 text-xs sm:text-sm text-white">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-green-500"></div>
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-green-500"></div>
               <span>Abgeschlossen</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-blue-500"></div>
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-blue-500"></div>
               <span>Aktuell</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-purple-500"></div>
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-purple-500"></div>
               <span>Verfügbar</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gray-400"></div>
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-400"></div>
               <span>Gesperrt</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-red-600 flex items-center justify-center">
+                <Flame className="w-4 h-4 text-white" />
+              </div>
+              <span>Boss</span>
             </div>
           </div>
         </div>
