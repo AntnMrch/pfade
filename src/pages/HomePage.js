@@ -413,7 +413,15 @@ const generateHexGrid = () => {
             {/* ---------------- WENN ES DIE AKTUELLE LEKTION IST (RITTER) ---------------- */}
             {!isBoss && isActive && (
               <g>
-                
+                {/* Stern-Abzeichen (direkt über dem Bild, Position unverändert) */}
+                <g transform="translate(0, 0)"> 
+                  <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
+                  <foreignObject x="-15" y="-15" width="30" height="30">
+                    <div className="flex items-center justify-center w-full h-full">
+                      <Star className="w-7 h-7 text-blue-600 fill-blue-600" />
+                    </div>
+                  </foreignObject>
+                </g>
                 {/* NEUE KORREKTUR: Ritter als reines <image> rendern, analog zum Drachen */}
                 <image
                     href="/matheritter.jpg"
@@ -425,6 +433,8 @@ const generateHexGrid = () => {
                     height="70"
                     style={{ pointerEvents: 'none', filter: 'drop-shadow(3px 3px 2px rgba(0,0,0,0.5))' }}
                 />
+                
+                
               </g>
             )}
 
