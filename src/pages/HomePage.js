@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Trophy,
   Star,
@@ -11,6 +11,20 @@ import {
   Crown,
   Zap,
 } from "lucide-react";
+
+
+// ====================================================================
+// HINTERGRUND-TERRAIN DEFINITION (WICHTIG: Bilder müssen im /public Ordner liegen!)
+// ====================================================================
+const terrainImages = [
+    '/terrain_forest.png', 
+    '/terrain_mountain.png', 
+    '/terrain_water.png', 
+    '/terrain_grass.png', 
+];
+// Hilfsfunktion, um ein zufälliges Terrain-Bild auszuwählen
+const getRandomTerrain = () => terrainImages[Math.floor(Math.random() * terrainImages.length)];
+// ====================================================================
 
 
 const Navigation = () => {
@@ -53,6 +67,8 @@ const Navigation = () => {
 
 const HomePage = () => {
   const [selectedLesson, setSelectedLesson] = useState(null);
+  // NEU: Zustand zur Speicherung der zufälligen Terrain-Zuweisungen
+  const [terrainAssignments, setTerrainAssignments] = useState({});
 
   const learningPath = [
     {
@@ -214,12 +230,14 @@ const HomePage = () => {
   ];
 
 const hexToPixel = (q, r, size) => {
-  // ÄNDERUNG: Statt (q + r/2) nutzen wir (q + (r % 2) / 2)
-  // Das sorgt dafür, dass nur ungerade Zeilen einen kleinen Versatz haben,
-  // aber das Raster insgesamt vertikal gerade bleibt.
+  // Diese Logik bleibt unverändert, um Ihre gewünschte Ausrichtung beizubehalten:
   const x = size * Math.sqrt(3) * (q + ((r % 2) / 2));
   const y = size * 3/2 * r;
   return { x, y };
+};
+
+const isPathHex = (q, r) => {
+    return learningPath.some(lesson => lesson.hexPos.q === q && lesson.hexPos.r === r);
 };
 
 const generateHexGrid = () => {
@@ -277,7 +295,8 @@ const generateHexGrid = () => {
     return "bg-red-400";
   };
 
-  const Hexagon = ({ q, r, size, lesson, onClick }) => {
+  // HINWEIS: Hier wurde die `terrain` Prop hinzugefügt und die Rendering-Logik angepasst
+  const Hexagon = ({ q, r, size, lesson, onClick, terrain }) => {
     const { x, y } = hexToPixel(q, r, size);
     const points = [];
     for (let i = 0; i < 6; i++) {
@@ -291,12 +310,14 @@ const generateHexGrid = () => {
     const isCompleted = lesson?.isCompleted;
     const isLocked = lesson?.isLocked;
 
+    // Standard-Styles für den HINTERGRUND
     let fillColor = "#8b5cf6";
     let opacity = 0.15;
     let strokeColor = "#6d28d9";
     let strokeWidth = 2;
 
     if (isLesson) {
+      // Styles für Lektionen (unverändert)
       if (isBoss) {
         fillColor = "#dc2626";
         opacity = 0.95;
@@ -330,16 +351,43 @@ const generateHexGrid = () => {
         onClick={isLesson && !isLocked ? onClick : undefined}
         className={isLesson && !isLocked ? "cursor-pointer" : ""}
       >
+        
+        {/* 1. Hintergrund / Terrain Bild (NUR für Hexagone ohne Lektion) */}
+        {!isLesson && terrain && (
+            <g>
+                <clipPath id={`clip-${q}-${r}`}>
+                    <polygon points={points.map((p) => p.join(",")).join(" ")} />
+                </clipPath>
+                
+                {/* Das Bild füllt das gesamte Hexagon-Gebiet aus */}
+                <image
+                    // WICHTIG: Pfade müssen relativ zum /public Ordner sein
+                    href={terrain} 
+                    clipPath={`url(#clip-${q}-${r})`}
+                    x={x - size * 1.15} 
+                    y={y - size}
+                    height={size * 2}
+                    width={size * 2.3} 
+                    preserveAspectRatio="xMidYMid slice"
+                />
+            </g>
+        )}
+        
+        {/* 2. Hexagon-Rand und Füllung */}
         <polygon
           points={points.map((p) => p.join(",")).join(" ")}
-          fill={fillColor}
-          opacity={opacity}
-          stroke={strokeColor}
-          strokeWidth={strokeWidth}
+          // Wenn es eine Lektion ist, nutze die Füllfarbe, sonst 'none' (da das Bild füllt)
+          fill={isLesson ? fillColor : 'none'} 
+          // Wenn es eine Lektion ist, nutze die definierte Opazität, sonst für den Hintergrund
+          opacity={isLesson ? opacity : 1}
+          // Nur Lektionen-Hexagone haben den farbigen Rand, Hintergrund-Hexagone haben keinen
+          stroke={isLesson ? strokeColor : 'none'} 
+          strokeWidth={isLesson ? strokeWidth : 0}
           className={
             isLesson && !isLocked ? "hover:opacity-100 transition-all" : ""
           }
         />
+
         {isLesson && (
           <g transform={`translate(${x}, ${y})`}>
             
@@ -386,37 +434,15 @@ const generateHexGrid = () => {
               </g>
             )}
 
-            {/* ---------------- WENN ES ABGESCHLOSSEN IST ---------------- */}
-            {!isBoss && !isActive && isCompleted && (
+            {/* ---------------- SYMBOL IN DER MITTE (ABGESCHLOSSEN, GESPERRT, VERFÜGBAR) ---------------- */}
+            {!isBoss && !isActive && (
               <g transform="translate(0, -5)">
                 <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
                 <foreignObject x="-15" y="-15" width="30" height="30">
                   <div className="flex items-center justify-center w-full h-full">
-                    <CheckCircle className="w-7 h-7 text-green-600" />
-                  </div>
-                </foreignObject>
-              </g>
-            )}
-
-            {/* ---------------- WENN ES GESPERRT IST ---------------- */}
-            {!isBoss && !isActive && isLocked && (
-              <g transform="translate(0, -5)">
-                <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
-                <foreignObject x="-15" y="-15" width="30" height="30">
-                  <div className="flex items-center justify-center w-full h-full">
-                    <Lock className="w-6 h-6 text-gray-600" />
-                  </div>
-                </foreignObject>
-              </g>
-            )}
-            
-            {/* ---------------- WENN ES VERFÜGBAR IST ---------------- */}
-            {!isBoss && !isActive && !isCompleted && !isLocked && (
-              <g transform="translate(0, -5)">
-                <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
-                <foreignObject x="-15" y="-15" width="30" height="30">
-                  <div className="flex items-center justify-center w-full h-full">
-                    <Trophy className="w-6 h-6 text-purple-600" />
+                    {isCompleted && <CheckCircle className="w-7 h-7 text-green-600" />}
+                    {isLocked && <Lock className="w-6 h-6 text-gray-600" />}
+                    {!isCompleted && !isLocked && <Trophy className="w-6 h-6 text-purple-600" />}
                   </div>
                 </foreignObject>
               </g>
@@ -645,6 +671,21 @@ const generateHexGrid = () => {
   const currentLesson = learningPath.find((l) => l.isActive);
   const hexSize = 60;
   const gridHexes = generateHexGrid();
+  
+  // NEU: Initialisierung der Terrain-Zuweisungen
+  // Verwendung von useMemo, um die Zuweisungen nur einmalig beim ersten Rendern durchzuführen
+  React.useMemo(() => {
+    const newAssignments = {};
+    gridHexes.forEach(hex => {
+        const key = `${hex.q}-${hex.r}`;
+        // Nur Hexagone, die KEINE Lektion sind, erhalten zufälliges Terrain
+        if (!isPathHex(hex.q, hex.r)) {
+            newAssignments[key] = getRandomTerrain();
+        }
+    });
+    setTerrainAssignments(newAssignments);
+  }, []); // Leeres Array als Abhängigkeit, damit es nur einmal läuft
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-3 sm:p-6 lg:p-8">
@@ -678,36 +719,20 @@ const generateHexGrid = () => {
           
             <svg
             width="100%"
-            height="100%" // Du kannst hier auch "100%" machen, wenn der Container eine feste Höhe hat
-            // Erklärung ViewBox:
-            // x = -200: Startet weiter links, um die neuen Hintergrund-Hexagons zu zeigen
-            // y = -100: Startet etwas höher
-            // width = 750: Die Breite des sichtbaren Bereichs (zoomt etwas raus)
-            // height = 1100: Die Höhe (zeigt mehr vom Pfad)
+            height="100%"
             viewBox="-200 -100 750 1100" 
             className="mx-auto"
-            preserveAspectRatio="xMidYMid slice" // "slice" sorgt dafür, dass es den ganzen Bereich ausfüllt
+            preserveAspectRatio="xMidYMid slice"
             >
           
-
-
-            {learningPath.map((lesson, i) => {
-              if (i === 0) return null;
-              const prevLesson = learningPath[i - 1];
-              return (
-                <PathLine
-                  key={`path-${i}`}
-                  from={prevLesson.hexPos}
-                  to={lesson.hexPos}
-                  completed={prevLesson.isCompleted}
-                />
-              );
-            })}
-
+            {/* 1. ALLE Hexagone (Terrain & Missionen) MÜSSEN ZUERST GERENDERT WERDEN */}
             {gridHexes.map((hex, i) => {
               const lesson = learningPath.find(
                 (l) => l.hexPos.q === hex.q && l.hexPos.r === hex.r
               );
+              
+              const key = `${hex.q}-${hex.r}`;
+              
               return (
                 <Hexagon
                   key={i}
@@ -716,10 +741,24 @@ const generateHexGrid = () => {
                   size={hexSize}
                   lesson={lesson}
                   onClick={() => lesson && setSelectedLesson(lesson)}
+                  terrain={lesson ? null : terrainAssignments[key]}
                 />
               );
             })}
-
+            
+            {/* 2. Pfad-Linien (Jetzt ZULETZT gerendert, damit sie drüber liegen) */}
+            {learningPath.map((lesson, i) => {
+              if (i === 0) return null;
+              const prevLesson = learningPath[i - 1];
+              return (
+                <PathLine
+                  key={`path-${i}`}
+                  from={prevLesson.hexPos}
+                  to={lesson.hexPos}
+                  completed={prevLesson.isCompleted} 
+                />
+              );
+            })}
             
           </svg>
         </div>
