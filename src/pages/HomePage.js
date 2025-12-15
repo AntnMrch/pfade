@@ -295,7 +295,6 @@ const generateHexGrid = () => {
     return "bg-red-400";
   };
 
-  // HINWEIS: Hier wurde die `terrain` Prop hinzugefügt und die Rendering-Logik angepasst
   const Hexagon = ({ q, r, size, lesson, onClick, terrain }) => {
     const { x, y } = hexToPixel(q, r, size);
     const points = [];
@@ -304,20 +303,21 @@ const generateHexGrid = () => {
       points.push([x + size * Math.cos(angle), y + size * Math.sin(angle)]);
     }
 
-    const isLesson = lesson !== undefined;
-    const isBoss = lesson?.isBoss;
-    const isActive = lesson?.isActive;
-    const isCompleted = lesson?.isCompleted;
-    const isLocked = lesson?.isLocked;
+    // KORREKTUR 1 (Null-Pointer-Sicherheit): isLesson ist nur wahr, wenn lesson ein Objekt ist (nicht null oder undefined)
+    const isLesson = lesson != null; 
+    
+    // Wir können die lesson-Properties nur lesen, wenn isLesson true ist
+    const isBoss = isLesson ? lesson.isBoss : false; 
+    const isActive = isLesson ? lesson.isActive : false;
+    const isCompleted = isLesson ? lesson.isCompleted : false;
+    const isLocked = isLesson ? lesson.isLocked : false;
 
-    // Standard-Styles für den HINTERGRUND
     let fillColor = "#8b5cf6";
     let opacity = 0.15;
     let strokeColor = "#6d28d9";
     let strokeWidth = 2;
 
     if (isLesson) {
-      // Styles für Lektionen (unverändert)
       if (isBoss) {
         fillColor = "#dc2626";
         opacity = 0.95;
@@ -350,22 +350,26 @@ const generateHexGrid = () => {
       <g
         onClick={isLesson && !isLocked ? onClick : undefined}
         className={isLesson && !isLocked ? "cursor-pointer" : ""}
+        // Die Transformation positioniert die gesamte <g> Gruppe
+        transform={`translate(${x}, ${y})`} 
       >
         
         {/* 1. Hintergrund / Terrain Bild (NUR für Hexagone ohne Lektion) */}
         {!isLesson && terrain && (
             <g>
                 <clipPath id={`clip-${q}-${r}`}>
-                    <polygon points={points.map((p) => p.join(",")).join(" ")} />
+                    {/* KORREKTUR 3 (Wasser-Fix): Punkte sind relativ zu (0,0) der <g>-Gruppe */}
+                    <polygon 
+                        points={points.map((p) => [p[0] - x, p[1] - y].join(",")).join(" ")} 
+                    />
                 </clipPath>
                 
-                {/* Das Bild füllt das gesamte Hexagon-Gebiet aus */}
                 <image
-                    // WICHTIG: Pfade müssen relativ zum /public Ordner sein
                     href={terrain} 
                     clipPath={`url(#clip-${q}-${r})`}
-                    x={x - size * 1.15} 
-                    y={y - size}
+                    // x und y sind relativ zur Hex-Mitte (0,0)
+                    x={-size * 1.15} 
+                    y={-size}
                     height={size * 2}
                     width={size * 2.3} 
                     preserveAspectRatio="xMidYMid slice"
@@ -375,12 +379,12 @@ const generateHexGrid = () => {
         
         {/* 2. Hexagon-Rand und Füllung */}
         <polygon
-          points={points.map((p) => p.join(",")).join(" ")}
-          // Wenn es eine Lektion ist, nutze die Füllfarbe, sonst 'none' (da das Bild füllt)
+          points={points.map((p) => (
+            // Punkte sind relativ zu (0,0) der <g>-Gruppe
+            [p[0] - x, p[1] - y].join(",")
+          )).join(" ")}
           fill={isLesson ? fillColor : 'none'} 
-          // Wenn es eine Lektion ist, nutze die definierte Opazität, sonst für den Hintergrund
           opacity={isLesson ? opacity : 1}
-          // Nur Lektionen-Hexagone haben den farbigen Rand, Hintergrund-Hexagone haben keinen
           stroke={isLesson ? strokeColor : 'none'} 
           strokeWidth={isLesson ? strokeWidth : 0}
           className={
@@ -388,53 +392,43 @@ const generateHexGrid = () => {
           }
         />
 
+        {/* 3. Lektions-Inhalt (Nur, wenn es eine Lektion ist!) */}
         {isLesson && (
-          <g transform={`translate(${x}, ${y})`}>
+          <g>
             
-{/* ---------------- WENN ES DER ENDBOSS IST (DRACHE) ---------------- */}
+            {/* ---------------- WENN ES DER ENDBOSS IST (DRACHE) ---------------- */}
             {isBoss && (
-              <g transform="translate(0, -10)">
-                <foreignObject x="-50" y="-70" width="100" height="140" style={{ pointerEvents: 'none' }}>
-                  <div className="flex flex-col items-center justify-center w-full h-full">
-                    {/* HINWEIS: Stelle sicher, dass drache.jpg im /public-Ordner liegt */}
-                    <img
-                      src="/drache.jpg" 
-                      alt="drache"
-                      className="w-16 sm:w-20 lg:w-24 h-auto drop-shadow-xl" 
-                    />
-                  </div>
-                </foreignObject>
-              </g>
+              // KORREKTUR 2 (Mobile-Fix): Positionierung ist relativ zu (0,0) der <g>-Gruppe
+              <image
+                href="/drache.jpg" 
+                alt="drache"
+                x={-35} 
+                y={-60} 
+                width="70" 
+                height="70"
+                style={{ pointerEvents: 'none', filter: 'drop-shadow(3px 3px 2px rgba(0,0,0,0.5))' }}
+              />
             )}
             
             {/* ---------------- WENN ES DIE AKTUELLE LEKTION IST (RITTER) ---------------- */}
             {!isBoss && isActive && (
-              <g transform="translate(0, -70)">
-                {/* Ritter-Figur, 70px über dem Hexagon */}
-                <foreignObject x="-50" y="-70" width="100" height="140" style={{ pointerEvents: 'none' }}>
-                  <div className="flex flex-col items-center justify-center w-full h-full">
-                    {/* HINWEIS: Stelle sicher, dass matheritter.jpg im /public-Ordner liegt */}
-                    <img
-                      src="/matheritter.jpg"
-                      alt="matheritter"
-                      className="w-16 sm:w-20 lg:w-24 h-auto drop-shadow-xl"
-                    />
-                  </div>
-                </foreignObject>
+              <g>
                 
-                {/* Blauer Stern im Hexagon (für aktive Lektion) */}
-                <g transform="translate(0, 70)"> 
-                  <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
-                  <foreignObject x="-15" y="-15" width="30" height="30">
-                    <div className="flex items-center justify-center w-full h-full">
-                      <Star className="w-7 h-7 text-blue-600 fill-blue-600" />
-                    </div>
-                  </foreignObject>
-                </g>
+                {/* NEUE KORREKTUR: Ritter als reines <image> rendern, analog zum Drachen */}
+                <image
+                    href="/matheritter.jpg"
+                    alt="matheritter"
+                    // Positionierung relativ zur Hex-Mitte (0,0)
+                    x={-35} 
+                    y={-70} 
+                    width="70" 
+                    height="70"
+                    style={{ pointerEvents: 'none', filter: 'drop-shadow(3px 3px 2px rgba(0,0,0,0.5))' }}
+                />
               </g>
             )}
 
-            {/* ---------------- SYMBOL IN DER MITTE (ABGESCHLOSSEN, GESPERRT, VERFÜGBAR) ---------------- */}
+            {/* ---------------- SYMBOL IN DER MITTE ---------------- */}
             {!isBoss && !isActive && (
               <g transform="translate(0, -5)">
                 <circle cx="0" cy="0" r="18" fill="white" opacity="0.9" />
@@ -451,12 +445,12 @@ const generateHexGrid = () => {
             {/* TEXT-Labels unter den Hexagons */}
             <text
               x="0"
-              y={isBoss ? "50" : "25"} // y auf 50 erhöht, weil das Drachenbild größer ist
+              y={isBoss ? "50" : "25"} 
               textAnchor="middle"
               className={`text-xs font-bold ${isBoss ? "fill-red-100" : "fill-white"}`}
               style={{ fontSize: isBoss ? "13px" : "11px", pointerEvents: "none" }}
             >
-              {isBoss ? "BOSS" : lesson.title.split(" ")[0]}
+              {isBoss ? "BOSS" : lesson.title.split(" ")[0]} 
             </text>
             {!isBoss && (
               <text
