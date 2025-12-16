@@ -73,9 +73,17 @@ const mockDashboardData = {
 // ====================================================================
 
 const Navigation = () => {
+    // Neue Variable für den aktiven Zustand der Nachhilfeseite
+    const isTutoringActive = window.location.pathname === '/tutoring';
+    
+    // Bestehende Variablen
     const isDashboardActive = window.location.pathname === '/dashboard';
     const isCharacterActive = window.location.pathname === '/character';
+    // Annahme: Startseite ist die Pfad-Auswahl
     const isPathActive = window.location.pathname === '/path';
+    
+    // Da die LandingPage jetzt auf '/' liegt, müssen wir das auch berücksichtigen:
+    const isHomeActive = window.location.pathname === '/'; 
 
     return (
         <nav className="bg-indigo-800/95 backdrop-blur-sm border-b border-white/30 sticky top-0 z-50 shadow-lg">
@@ -89,13 +97,25 @@ const Navigation = () => {
                     </div>
 
                     <div className="flex gap-1 sm:gap-4">
+                        {/* PFAD (geändert auf /path, oder Home falls LandingPage gemeint ist) */}
                         <a
-                            href="/path"
-                            className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isPathActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
+                            href="/" // Landet auf der Startseite mit der Pfad-Auswahl
+                            className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isHomeActive || isPathActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
                         >
-                            <span className="hidden sm:inline">🗺️ Pfad</span>
+                            <span className="hidden sm:inline">🗺️ Start</span>
                             <span className="sm:hidden text-lg">🗺️</span>
                         </a>
+                        
+                        {/* NEU: NACHHILFE */}
+                        <a
+                            href="/tutoring"
+                            className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isTutoringActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
+                        >
+                            <span className="hidden sm:inline">🧑‍🏫 Nachhilfe</span>
+                            <span className="sm:hidden text-lg">🧑‍🏫</span>
+                        </a>
+                        
+                        {/* CHARACTER */}
                         <a
                             href="/character"
                             className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isCharacterActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
@@ -103,6 +123,8 @@ const Navigation = () => {
                             <span className="hidden sm:inline">⚔️ Character</span>
                             <span className="sm:hidden text-lg">⚔️</span>
                         </a>
+                        
+                        {/* DASHBOARD */}
                         <a
                             href="/dashboard"
                             className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isDashboardActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
