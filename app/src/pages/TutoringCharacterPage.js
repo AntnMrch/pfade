@@ -21,7 +21,7 @@ const Navigation = () => {
           <div className="flex gap-1 sm:gap-4">
             {/* Mobile: Kleinere Buttons und Icons */}
             <a
-              href="/"
+              href="/path"
               className="p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 hover:bg-white/20 transition-all font-medium text-sm sm:text-base flex items-center"
             >
               <span className="hidden sm:inline">🗺️ Pfad</span>

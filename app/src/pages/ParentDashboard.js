@@ -75,7 +75,7 @@ const mockDashboardData = {
 const Navigation = () => {
     const isDashboardActive = window.location.pathname === '/dashboard';
     const isCharacterActive = window.location.pathname === '/character';
-    const isPathActive = window.location.pathname === '/';
+    const isPathActive = window.location.pathname === '/path';
 
     return (
         <nav className="bg-indigo-800/95 backdrop-blur-sm border-b border-white/30 sticky top-0 z-50 shadow-lg">
@@ -90,7 +90,7 @@ const Navigation = () => {
 
                     <div className="flex gap-1 sm:gap-4">
                         <a
-                            href="/"
+                            href="/path"
                             className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isPathActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
                         >
                             <span className="hidden sm:inline">🗺️ Pfad</span>
