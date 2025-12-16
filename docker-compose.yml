@@ -1,0 +1,12 @@
+services:
+  app:
+    # Build the image using the Dockerfile located in the 'app' directory
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./app:/app
+      - /app/node_modules
