@@ -500,7 +500,7 @@ const generateHexGrid = () => {
 
   const DetailModal = ({ lesson }) => {
     if (!lesson) return null;
-    const progressPercent = (lesson.xp / lesson.maxXp) * 100;
+    const progressPercent = (lesson.completedExercises / lesson.exercises) * 100;
 
     return (
       <div
