@@ -17,10 +17,10 @@ import {
 // ====================================================================
 
 const mockTutors = [
-  { id: 1, name: "Dr. Anna Müller", subject: "Mathe", rating: 4.8, reviews: 85, bio: "Experte für Analysis und Algebra. 10 Jahre Erfahrung an Gymnasien.", isFavorite: true },
-  { id: 2, name: "Max Schmidt", subject: "Deutsch", rating: 4.5, reviews: 120, bio: "Fokus auf Grammatik, Rechtschreibung und Textanalyse. Geduldig und motivierend.", isFavorite: false },
-  { id: 3, name: "Lisa Huber", subject: "Englisch", rating: 4.9, reviews: 60, bio: "Muttersprachlerin mit Spezialisierung auf Konversation und Business English.", isFavorite: true },
-  { id: 4, name: "Prof. Jens Koch", subject: "Naturwissenschaften", rating: 4.7, reviews: 45, bio: "Physik und Chemie leicht verständlich. Ehemaliger Universitätsdozent.", isFavorite: false },
+  { id: 1, name: "Dr. Klito Rieß", subject: "Mathe", rating: 4.8, reviews: 85, bio: "Experte für Analysis und Algebra. 10 Jahre Erfahrung an Gymnasien.", isFavorite: true },
+  { id: 2, name: "Hans Maul", subject: "Deutsch", rating: 4.5, reviews: 120, bio: "Fokus auf Grammatik, Rechtschreibung und Textanalyse. Geduldig und motivierend.", isFavorite: false },
+  { id: 3, name: "Heidi Witzka", subject: "Englisch", rating: 4.9, reviews: 60, bio: "Muttersprachlerin mit Spezialisierung auf Konversation und Business English.", isFavorite: true },
+  { id: 4, name: "Dick Erchen", subject: "Naturwissenschaften", rating: 4.7, reviews: 45, bio: "Physik und Chemie leicht verständlich. Ehemaliger Universitätsdozent.", isFavorite: false },
   { id: 5, name: "Sabine Wagner", subject: "Mathe", rating: 4.6, reviews: 105, bio: "Hilft Schülern der Unter- und Mittelstufe mit Grundlagen und Prüfungen.", isFavorite: false },
 ];
 
