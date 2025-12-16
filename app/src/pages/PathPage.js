@@ -695,7 +695,7 @@ const generateHexGrid = () => {
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 p-3 sm:p-6 lg:p-8">
         <Navigation /> 
       <div className="max-w-6xl mx-auto">
-        <div className="bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6 lg:mb-8 text-white border border-white/20">
+        <div className="bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6 lg:p-8 mb-4 mt-4 sm:mb-6 lg:mb-8 lg:mt-8 text-white border border-white/20">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-3 drop-shadow-lg text-center sm:text-left">
             🎯 Dein Mathe-Lernpfad
           </h1>
