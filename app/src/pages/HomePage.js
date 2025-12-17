@@ -32,8 +32,8 @@ const PricingCard = ({
             header: "bg-gray-100",
             text: "text-gray-600",
             iconBg: "bg-purple-700",
-            iconColor: "text-white",
-            button: null
+            iconColor: "text-white"
+            //button: null
         },
         basic: {
             main: "bg-[#7c3aed]",
@@ -175,7 +175,7 @@ const LandingPage = () => {
         {
             id: 'basic',
             title: 'bAIsic',
-            price: '4,99',
+            price: '7,00',
             theme: 'basic',
             icon: Lock,
             features: ['Mehr als 100 Learning-Paths', 'AI-Lerntools – sicher & exklusiv', 'Tausende Übungsaufgaben'],
@@ -183,19 +183,19 @@ const LandingPage = () => {
         {
             id: 'professor',
             title: 'professor',
-            price: '55,00',
+            price: '89,00',
             theme: 'professor',
             icon: Pin,
             isHighlighted: true,
-            features: ['Alle AI-Tools inklusive', '2 Std/Woche persönlicher Nachhilfelehrer', 'Lerne mit einem echten Menschen'],
+            features: ['Alle AI-Tools inklusive', '1 Std/Woche persönlicher Nachhilfelehrer', 'Lerne mit einem echten Menschen'],
         },
         {
             id: 'headmaster',
             title: 'headmaster',
-            price: '95,00',
+            price: '199,00',
             theme: 'headmaster',
             icon: RotateCcw,
-            features: ['Alle AI-Tools inklusive', '5 Std/Woche persönlicher Nachhilfelehrer', 'Maximale Flexibilität'],
+            features: ['Alle AI-Tools inklusive', '3 Std/Woche persönlicher Nachhilfelehrer', 'Maximale Flexibilität'],
         }
     ];
 
@@ -260,7 +260,7 @@ const LandingPage = () => {
                 </div>
                 
                 <footer className="bg-gray-50 py-12 text-center text-gray-400 text-sm border-t">
-                    © 2025 Study Hub. Alle Preise in Euro inkl. MwSt.
+                    © 2025 Study Hub. Alle Preise in Euro inkl. MwSt.<br/> Diese Website ist kein offizielles Produkt einer Bildungseinrichtung, sondern dient nur zu Illustrationszwecken und Demonstration für eine Vorlesung.
                 </footer>
             </div>
         </div>
