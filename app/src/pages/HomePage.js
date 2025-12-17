@@ -247,9 +247,6 @@ const LandingPage = () => {
                         <h2 className="text-3xl md:text-4xl font-bold text-[#1a1a7a] mb-4">
                             Perfekt. Wähle jetzt deinen Zugang.
                         </h2>
-                        <p className="text-gray-500">
-                            Transparente Preise für maximalen Lernerfolg.
-                        </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-stretch gap-0">
