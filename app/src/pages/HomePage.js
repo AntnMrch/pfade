@@ -66,7 +66,7 @@ const PricingCard = ({
         flex flex-col relative rounded-none shadow-xl overflow-hidden
         ${style.main} 
         ${style.text}
-        ${isHighlighted ? 'transform scale-105 z-10 rounded-lg shadow-2xl my-[-20px]' : 'my-0'}
+        ${isHighlighted ? 'transform scale-105 z-10 rounded-lg shadow-2xl my-[-10px]' : 'my-0'}
         transition-all duration-300 h-full
     `;
 
@@ -104,7 +104,7 @@ const PricingCard = ({
                     <a 
                         href="/path"
                         className={`
-                            px-8 py-2 rounded-full font-bold bg-white shadow-md hover:scale-105 transition-transform cursor-pointer
+                            px-8 py-2 mb-6 rounded-full font-bold bg-white shadow-md hover:scale-105 transition-transform cursor-pointer
                             ${style.button}
                         `}
                     >
