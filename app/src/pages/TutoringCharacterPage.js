@@ -21,20 +21,20 @@ const Navigation = () => {
         <nav className="bg-indigo-800/95 backdrop-blur-sm border-b border-white/30 sticky top-0 z-50 shadow-lg">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-14 sm:h-16">
-                    <div className="flex items-center gap-2">
+                    <a className="flex items-center gap-2" href="/">
                         <span className="text-2xl text-white">🎓</span>
                         <span className="text-white font-bold text-lg sm:text-xl">
                             Lernplattform
                         </span>
-                    </div>
+                    </a>
 
                     <div className="flex gap-1 sm:gap-4">
                         {/* PFAD (geändert auf /path, oder Home falls LandingPage gemeint ist) */}
                         <a
-                            href="/" // Landet auf der Startseite mit der Pfad-Auswahl
+                            href="/path" // Landet auf der Startseite mit der Pfad-Auswahl
                             className={`p-2 sm:px-4 sm:py-2 rounded-lg text-white/90 transition-all font-medium text-sm sm:text-base flex items-center ${isHomeActive || isPathActive ? 'bg-white/20' : 'hover:bg-white/20'}`}
                         >
-                            <span className="hidden sm:inline">🗺️ Start</span>
+                            <span className="hidden sm:inline">🗺️ Pfad</span>
                             <span className="sm:hidden text-lg">🗺️</span>
                         </a>
                         
