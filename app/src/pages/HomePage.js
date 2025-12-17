@@ -170,7 +170,7 @@ const LandingPage = () => {
             theme: 'free',
             icon: Lock,
             features: ['Teste alle Tools, Lernspiele und Inhalte', 'Lerne die möglichen Lernpfade kennen', 'Nutze unseren AI-Studybuddy'],
-            hasButton: false
+            hasButton: true
         },
         {
             id: 'basic',
